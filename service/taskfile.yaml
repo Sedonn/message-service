@@ -1,0 +1,7 @@
+version: '3'
+
+tasks:
+  run:local:
+    desc: Запустить микросервис сообщений с локальным окружением.
+    cmds:
+      - go run ./cmd/message/app.go --config_path="./config/local.yaml"

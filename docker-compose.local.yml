@@ -1,0 +1,14 @@
+version: '3'
+
+name: message-service-local
+
+services:
+  message-service-db:
+    extends:
+      file: docker-compose.common.yml
+      service: postgresql
+
+    container_name: message-service-db-local
+    environment:
+      POSTGRES_USER: message
+      POSTGRES_PASSWORD: test

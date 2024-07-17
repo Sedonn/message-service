@@ -1,0 +1,6 @@
+version: '3'
+
+tasks:
+  docker:compose-local:
+    desc: Выполнить docker-compose и запустить сервисы в локальном окружении.
+    cmd: docker-compose -f docker-compose.local.yml up --build
