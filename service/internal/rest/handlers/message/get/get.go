@@ -28,6 +28,19 @@ type request struct {
 type response []models.Message
 
 // New возвращает новый хендлер, который извлекает данные сообщений.
+//
+//	@Summary		Получить сообщения
+//	@Description	Получение сообщений.
+//	@Tags			messages
+//	@Accept			json
+//	@Produce		json
+//	@Param			page		query		uint	false	"Номер страницы. Если пуст - 0"
+//	@Param			processed	query		bool	false	"Статус - обработано. Если пусто - выводит все сообщения"
+//	@Success		200			{array}		models.Message
+//	@Failure		400			{object}	mwerror.ErrorResponse
+//	@Failure		404			{object}	mwerror.ErrorResponse
+//	@Failure		500			{object}	mwerror.ErrorResponse
+//	@Router			/messages [get]
 func New(m MessageGetter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req request

@@ -12,6 +12,7 @@ import (
 
 	"github.com/sedonn/message-service/internal/pkg/logger"
 	messagerest "github.com/sedonn/message-service/internal/rest/handlers/message"
+	"github.com/sedonn/message-service/internal/rest/handlers/swagdocs"
 	mwerror "github.com/sedonn/message-service/internal/rest/middleware/error"
 )
 
@@ -28,10 +29,15 @@ func New(log *slog.Logger, port int, m messagerest.Messenger) *App {
 
 	router.Use(mwerror.New())
 
-	v1 := router.Group("/v1")
+	api := router.Group("api")
 	{
-		messagerest.New(m).BindTo(v1)
+		v1 := api.Group("/v1")
+		{
+			messagerest.New(m).BindTo(v1)
+		}
 	}
+
+	swagdocs.BindTo(router)
 
 	srv := &http.Server{
 		Addr:    net.JoinHostPort("", strconv.Itoa(port)),

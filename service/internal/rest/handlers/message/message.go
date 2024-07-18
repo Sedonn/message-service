@@ -27,7 +27,7 @@ func New(m Messenger) *Handler {
 
 // BindTo привязывает хендлер к определенной группе маршрутов.
 func (h *Handler) BindTo(router *gin.RouterGroup) {
-	message := router.Group("/message")
+	message := router.Group("/messages")
 	{
 		message.GET("/", get.New(h.messenger))
 		message.POST("/", create.New(h.messenger))

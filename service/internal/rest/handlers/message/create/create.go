@@ -21,6 +21,18 @@ type response struct {
 }
 
 // New возвращает новый объект хендлера, который сохраняет данные сообщения.
+//
+//	@Summary		Создать сообщение
+//	@Description	Создание нового сообщения
+//	@Tags			messages
+//	@Accept			json
+//	@Produce		json
+//	@Param			message	body		request	true	"Содержимое сообщения"
+//	@Success		200		{object}	response
+//	@Failure		400		{object}	mwerror.ErrorResponse
+//	@Failure		404		{object}	mwerror.ErrorResponse
+//	@Failure		500		{object}	mwerror.ErrorResponse
+//	@Router			/messages [post]
 func New(m MessageCreator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req request

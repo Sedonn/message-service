@@ -12,6 +12,11 @@ import (
 	"github.com/sedonn/message-service/internal/pkg/logger"
 )
 
+//	@title			Message-service
+//	@version		1.0
+//	@description	Микросервис обработки сообщений.
+
+// @BasePath	/api/v1
 func main() {
 	const op = "message.main"
 	ctx, cancel := context.WithCancel(context.Background())

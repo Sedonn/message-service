@@ -1,0 +1,109 @@
+basePath: /api/v1
+definitions:
+  create.request:
+    properties:
+      content:
+        maxLength: 256
+        type: string
+    required:
+    - content
+    type: object
+  create.response:
+    properties:
+      id:
+        type: integer
+    type: object
+  models.Message:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      processedAt:
+        type: string
+    type: object
+  mwerror.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Микросервис обработки сообщений.
+  title: Message-service
+  version: "1.0"
+paths:
+  /messages:
+    get:
+      consumes:
+      - application/json
+      description: Получение сообщений.
+      parameters:
+      - description: Номер страницы. Если пуст - 0
+        in: query
+        name: page
+        type: integer
+      - description: Статус - обработано. Если пусто - выводит все сообщения
+        in: query
+        name: processed
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Message'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/mwerror.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/mwerror.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/mwerror.ErrorResponse'
+      summary: Получить сообщения
+      tags:
+      - messages
+    post:
+      consumes:
+      - application/json
+      description: Создание нового сообщения
+      parameters:
+      - description: Содержимое сообщения
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/create.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/create.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/mwerror.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/mwerror.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/mwerror.ErrorResponse'
+      summary: Создать сообщение
+      tags:
+      - messages
+swagger: "2.0"
