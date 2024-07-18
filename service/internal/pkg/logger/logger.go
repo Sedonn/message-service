@@ -4,8 +4,9 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/sedonn/message-service/internal/config"
 	gormlog "gorm.io/gorm/logger"
+
+	"github.com/sedonn/message-service/internal/config"
 )
 
 // New создает и настраивает объект логгера на основе типа текущего окружения.
@@ -34,4 +35,9 @@ func NewGORMLogger(env string) gormlog.Interface {
 	}
 
 	return gormlog.Default.LogMode(level)
+}
+
+// StringError создает slog.Attr со строковым представлением ошибки.
+func StringError(err error) slog.Attr {
+	return slog.String("err", err.Error())
 }

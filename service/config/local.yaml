@@ -1,7 +1,13 @@
 env: local
 
 rest:
-  port: 8080
+  port: 8081
+
+kafka:
+  brokers: localhost:19092
+  topics:
+    processing-messages: processing-messages
+    processed-messages: processing-messages
 
 db:
   host: localhost

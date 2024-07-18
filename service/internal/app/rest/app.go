@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/sedonn/message-service/internal/pkg/logger"
 	messagerest "github.com/sedonn/message-service/internal/rest/handlers/message"
 	mwerror "github.com/sedonn/message-service/internal/rest/middleware/error"
 )
@@ -69,10 +70,12 @@ func (a *App) Run() error {
 // Stop останавливает REST-API сервер.
 func (a *App) Stop() {
 	const op = "restapp.Stop"
-	log := a.log.With(slog.String("op", op))
+	log := a.log.With(slog.String("op", op), slog.String("address", a.httpServer.Addr))
 
-	log.Info("shutting down REST-API server", slog.String("address", a.httpServer.Addr))
+	log.Info("shutting down REST-API server")
 	if err := a.httpServer.Shutdown(context.Background()); err != nil {
-		log.Error("failed to shut down REST-API server", slog.String("err", err.Error()))
+		log.Error("failed to shut down REST-API server", logger.StringError(err))
 	}
+
+	log.Info("REST-API server is shut down")
 }

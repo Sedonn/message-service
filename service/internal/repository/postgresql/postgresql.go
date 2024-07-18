@@ -91,6 +91,15 @@ func (r *Repository) SaveMessage(ctx context.Context, m models.Message) (uint64,
 	return m.ID, nil
 }
 
+// UpdateMessage обновляет данные существующего сообщения.
+func (r *Repository) UpdateMessage(ctx context.Context, m models.Message) (models.Message, error) {
+	if tx := r.db.Updates(&m); tx.Error != nil {
+		return models.Message{}, tx.Error
+	}
+
+	return m, nil
+}
+
 // makeDSN создает строку подключения к базе данных на основе текущей конфигурации.
 func makeDSN(cfg *config.DBConfig) string {
 	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",

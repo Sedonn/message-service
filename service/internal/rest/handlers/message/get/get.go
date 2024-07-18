@@ -12,8 +12,10 @@ import (
 type MessageGetter interface {
 	// GetMessages получает все сообщения.
 	GetMessages(ctx context.Context, pageID uint) ([]models.Message, error)
+
 	// GetProcessedMessages получает только обработанные сообщения.
 	GetProcessedMessages(ctx context.Context, pageID uint) ([]models.Message, error)
+
 	// GetUnprocessedMessages получает только необработанные сообщения.
 	GetUnprocessedMessages(ctx context.Context, pageID uint) ([]models.Message, error)
 }

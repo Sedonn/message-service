@@ -12,3 +12,38 @@ services:
     environment:
       POSTGRES_USER: message
       POSTGRES_PASSWORD: test
+
+  kafka0:
+    extends:
+      file: docker-compose.common.yml
+      service: kafka
+
+    ports:
+      - 19092:19092
+    container_name: kafka-local
+    environment:
+      KAFKA_ENABLE_KRAFT: yes
+      KAFKA_CFG_PROCESS_ROLES: broker,controller
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,CONNECTIONS_FROM_HOST://:19092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,CONNECTIONS_FROM_HOST:PLAINTEXT
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka0:9092,CONNECTIONS_FROM_HOST://localhost:19092
+      KAFKA_NODE_ID: 1
+      KAFKA_CFG_BROKER_ID: 1
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka0:9093
+      KAFKA_KRAFT_CLUSTER_ID: 18749a1a-ee99-4004-8c73-855ae4b4acf5
+      ALLOW_PLAINTEXT_LISTENER: yes
+
+  kafka-ui:
+    extends:
+      file: docker-compose.common.yml
+      service: kafka-ui
+
+    container_name: kafka-ui-local
+    depends_on:
+      - kafka0
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS: kafka0:9092
+      KAFKA_CLUSTERS_0_AUDIT_TOPICAUDITENABLED: 'true'
+      KAFKA_CLUSTERS_0_AUDIT_CONSOLEAUDITENABLED: 'true'

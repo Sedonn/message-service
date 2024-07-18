@@ -16,9 +16,10 @@ const (
 
 // Config хранит конфигурацию приложения.
 type Config struct {
-	Env  string     `yaml:"env" env-default:"local"`
-	REST RESTConfig `yaml:"rest"`
-	DB   DBConfig   `yaml:"db"`
+	Env   string      `yaml:"env" env-default:"local"`
+	REST  RESTConfig  `yaml:"rest"`
+	DB    DBConfig    `yaml:"db"`
+	Kafka KafkaConfig `yaml:"kafka"`
 }
 
 // RESTConfig хранит конфигурацию REST-API сервера.
@@ -33,6 +34,18 @@ type DBConfig struct {
 	User     string `yaml:"username" env:"DB_USER" env-required:"true"`
 	Password string `yaml:"password" env:"DB_PASSWORD" env-required:"true"`
 	Database string `yaml:"database" env:"DB_NAME" env-required:"true"`
+}
+
+// KafkaConfig хранит конфигурацию брокеров и топиков Kafka.
+type KafkaConfig struct {
+	Brokers string      `yaml:"brokers" env:"KAFKA_BROKERS" env-required:"true"`
+	Topics  KafkaTopics `yaml:"topics"`
+}
+
+// KafkaConfig хранит используемые приложением топики.
+type KafkaTopics struct {
+	ProcessingMessages string `yaml:"processing-messages" env:"KAFKA_TOPIC_PROCESSING_MESSAGES" env-required:"true"`
+	ProcessedMessages  string `yaml:"processed-messages" env:"KAFKA_TOPIC_PROCESSED_MESSAGES" env-required:"true"`
 }
 
 // MustLoad загружает текущую конфигурацию микросервиса на основе пути к файлу конфигурации,
