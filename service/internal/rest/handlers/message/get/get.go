@@ -22,7 +22,7 @@ type MessageGetter interface {
 
 type request struct {
 	PageID    *uint `form:"page,default=0" binding:"numeric"`
-	Processed *bool `form:"processed" binding:"boolean"`
+	Processed *bool `form:"processed" binding:"omitempty,boolean"`
 }
 
 type response []models.Message
