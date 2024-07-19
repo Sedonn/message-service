@@ -44,6 +44,6 @@ jobs:
       - name: Start application
         run: |
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} \
-            "DATABASE_PASSWORD={{ env.DATABASE_PASSWORD }} docker-compose -f /root/apps/message-service/docker-compose.production.yaml up --build"
+            "DATABASE_PASSWORD=${{ env.DATABASE_PASSWORD }} docker compose -f /root/apps/message-service/docker-compose.production.yaml up --build -d"
         env:
           DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
