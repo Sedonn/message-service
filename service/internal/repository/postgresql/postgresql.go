@@ -1,7 +1,6 @@
 package postgresql
 
 import (
-	"context"
 	"fmt"
 
 	"gorm.io/driver/postgres"
@@ -40,64 +39,11 @@ func New(cfg *config.Config) (*Repository, error) {
 	return &Repository{db: db}, nil
 }
 
-// Messages возвращает данные о всех сообщениях.
-func (r *Repository) Messages(ctx context.Context, limit uint, offset uint) ([]models.Message, error) {
-	var messages []models.Message
-	if tx := r.db.Limit(int(limit)).Offset(int(offset)).Find(&messages); tx.Error != nil {
-		return nil, tx.Error
+// paginate обеспечивает постраничную навигацию в результатах запроса.
+func paginate(id, size uint) func(*gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Limit(int(size)).Offset(int(id * size))
 	}
-
-	return messages, nil
-}
-
-// ProcessedMessages возвращает данные только обработанных сообщений.
-func (r *Repository) ProcessedMessages(ctx context.Context, limit uint, offset uint) ([]models.Message, error) {
-	var messages []models.Message
-	tx := r.db.
-		Where("processed_at IS NOT NULL").
-		Limit(int(limit)).
-		Offset(int(offset)).
-		Find(&messages)
-
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return messages, nil
-}
-
-// UnprocessedMessages возвращает данные только необработанных сообщений.
-func (r *Repository) UnprocessedMessages(ctx context.Context, limit uint, offset uint) ([]models.Message, error) {
-	var messages []models.Message
-	tx := r.db.
-		Where("processed_at IS NULL").
-		Limit(int(limit)).
-		Offset(int(offset)).
-		Find(&messages)
-
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return messages, nil
-}
-
-// SaveMessage сохраняет данные нового сообщения.
-func (r *Repository) SaveMessage(ctx context.Context, m models.Message) (uint64, error) {
-	if tx := r.db.Create(&m); tx.Error != nil {
-		return 0, tx.Error
-	}
-
-	return m.ID, nil
-}
-
-// UpdateMessage обновляет данные существующего сообщения.
-func (r *Repository) UpdateMessage(ctx context.Context, m models.Message) (models.Message, error) {
-	if tx := r.db.Updates(&m); tx.Error != nil {
-		return models.Message{}, tx.Error
-	}
-
-	return m, nil
 }
 
 // makeDSN создает строку подключения к базе данных на основе текущей конфигурации.

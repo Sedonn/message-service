@@ -21,7 +21,7 @@ type MessageGetter interface {
 }
 
 type request struct {
-	PageID    *uint `form:"page,default=0" binding:"numeric"`
+	PageID    *uint `form:"page,default=0" binding:"numeric,gte=0"`
 	Processed *bool `form:"processed" binding:"omitempty,boolean"`
 }
 

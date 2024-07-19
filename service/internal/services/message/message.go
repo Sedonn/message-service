@@ -15,13 +15,13 @@ import (
 // MessageProvider описывает поведение объекта, который обеспечивает получение данных сообщений.
 type MessageProvider interface {
 	// Messages возвращает данные о всех сообщениях.
-	Messages(ctx context.Context, limit uint, offset uint) ([]models.Message, error)
+	Messages(ctx context.Context, pageID, pageSize uint) ([]models.Message, error)
 
 	// ProcessedMessages возвращает данные только обработанных сообщений.
-	ProcessedMessages(ctx context.Context, limit uint, offset uint) ([]models.Message, error)
+	ProcessedMessages(ctx context.Context, pageID, pageSize uint) ([]models.Message, error)
 
 	// UnprocessedMessages возвращает данные только необработанных сообщений.
-	UnprocessedMessages(ctx context.Context, limit uint, offset uint) ([]models.Message, error)
+	UnprocessedMessages(ctx context.Context, pageID, pageSize uint) ([]models.Message, error)
 }
 
 // MessageSaver описывает поведение объекта, который обеспечивает сохранение данных сообщений.
@@ -75,7 +75,7 @@ func (m *Message) GetMessages(ctx context.Context, pageID uint) ([]models.Messag
 
 	log.Info("attempt to get messages", slog.Int("page_size", pageSize))
 
-	messages, err := m.messageProvider.Messages(ctx, pageSize, pageID*pageSize)
+	messages, err := m.messageProvider.Messages(ctx, pageID, pageSize)
 	if err != nil {
 		log.Error("failed to get messages", logger.StringError(err))
 
@@ -97,7 +97,7 @@ func (m *Message) GetProcessedMessages(ctx context.Context, pageID uint) ([]mode
 
 	log.Info("attempt to get processed messages", slog.Int("page_size", pageSize))
 
-	messages, err := m.messageProvider.ProcessedMessages(ctx, pageSize, pageID*pageSize)
+	messages, err := m.messageProvider.ProcessedMessages(ctx, pageID, pageSize)
 	if err != nil {
 		log.Error("failed to get processed messages", logger.StringError(err))
 
@@ -119,7 +119,7 @@ func (m *Message) GetUnprocessedMessages(ctx context.Context, pageID uint) ([]mo
 
 	log.Info("attempt to get unprocessed messages", slog.Int("page_size", pageSize))
 
-	messages, err := m.messageProvider.UnprocessedMessages(ctx, pageSize, pageID*pageSize)
+	messages, err := m.messageProvider.UnprocessedMessages(ctx, pageID, pageSize)
 	if err != nil {
 		log.Error("failed to get unprocessed messages", logger.StringError(err))
 
