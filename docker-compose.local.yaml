@@ -5,7 +5,7 @@ name: message-service-local
 services:
   message-service-db:
     extends:
-      file: docker-compose.common.yml
+      file: docker-compose.common.yaml
       service: postgresql
 
     container_name: message-service-db-local
@@ -15,7 +15,7 @@ services:
 
   kafka0:
     extends:
-      file: docker-compose.common.yml
+      file: docker-compose.common.yaml
       service: kafka
 
     ports:
@@ -34,14 +34,27 @@ services:
       KAFKA_KRAFT_CLUSTER_ID: 18749a1a-ee99-4004-8c73-855ae4b4acf5
       ALLOW_PLAINTEXT_LISTENER: yes
 
+  kafka-init-topics:
+    extends:
+      file: docker-compose.common.yaml
+      service: kafka-confluentinc
+
+    depends_on:
+      kafka0:
+        condition: service_started
+    command: "bash -c 'echo Waiting for Kafka to be ready... && \
+      cub kafka-ready -b kafka0:9092 1 30 && \
+      kafka-topics --create --topic processing-messages --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka0:9092'"
+
   kafka-ui:
     extends:
-      file: docker-compose.common.yml
+      file: docker-compose.common.yaml
       service: kafka-ui
 
     container_name: kafka-ui-local
     depends_on:
-      - kafka0
+      kafka0:
+        condition: service_started
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS: kafka0:9092
