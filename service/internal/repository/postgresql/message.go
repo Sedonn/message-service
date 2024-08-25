@@ -10,7 +10,12 @@ import (
 // Messages возвращает данные о всех сообщениях.
 func (r *Repository) Messages(ctx context.Context, pageID, pageSize uint) ([]models.Message, error) {
 	var messages []models.Message
-	if tx := r.db.Scopes(paginate(pageID, pageSize)).Find(&messages); tx.Error != nil {
+	tx := r.db.
+		WithContext(ctx).
+		Scopes(paginate(pageID, pageSize)).
+		Find(&messages)
+
+	if tx.Error != nil {
 		return nil, tx.Error
 	}
 
@@ -21,6 +26,7 @@ func (r *Repository) Messages(ctx context.Context, pageID, pageSize uint) ([]mod
 func (r *Repository) ProcessedMessages(ctx context.Context, pageID, pageSize uint) ([]models.Message, error) {
 	var messages []models.Message
 	tx := r.db.
+		WithContext(ctx).
 		Scopes(paginate(pageID, pageSize), messageProcessed).
 		Find(&messages)
 
@@ -35,6 +41,7 @@ func (r *Repository) ProcessedMessages(ctx context.Context, pageID, pageSize uin
 func (r *Repository) UnprocessedMessages(ctx context.Context, pageID, pageSize uint) ([]models.Message, error) {
 	var messages []models.Message
 	tx := r.db.
+		WithContext(ctx).
 		Scopes(paginate(pageID, pageSize), messageUnprocessed).
 		Find(&messages)
 
@@ -47,7 +54,7 @@ func (r *Repository) UnprocessedMessages(ctx context.Context, pageID, pageSize u
 
 // SaveMessage сохраняет данные нового сообщения.
 func (r *Repository) SaveMessage(ctx context.Context, m models.Message) (uint64, error) {
-	if tx := r.db.Create(&m); tx.Error != nil {
+	if tx := r.db.WithContext(ctx).Create(&m); tx.Error != nil {
 		return 0, tx.Error
 	}
 
@@ -56,7 +63,7 @@ func (r *Repository) SaveMessage(ctx context.Context, m models.Message) (uint64,
 
 // UpdateMessage обновляет данные существующего сообщения.
 func (r *Repository) UpdateMessage(ctx context.Context, m models.Message) (models.Message, error) {
-	if tx := r.db.Updates(&m); tx.Error != nil {
+	if tx := r.db.WithContext(ctx).Updates(&m); tx.Error != nil {
 		return models.Message{}, tx.Error
 	}
 
